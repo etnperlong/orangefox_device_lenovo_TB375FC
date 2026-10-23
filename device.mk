@@ -32,3 +32,13 @@ PRODUCT_SOONG_NAMESPACES += \
 # The stock vendor launched with Android 14 (API 34); the LineageOS tree ships
 # the same value.
 PRODUCT_SHIPPING_API_LEVEL := 34
+
+# First-stage fstab, the same file the LineageOS tree installs. The bootloader
+# reports ro.hardware=mt8792 while the DT is MT6897, so stock ships it under
+# both names. vendor_ramdisk00 needs it to mount the ROM's logical partitions;
+# the recovery ramdisk gets its own copy like the LineageOS recovery.
+PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/rootdir/etc/fstab.mt6897:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.mt6897 \
+    $(DEVICE_PATH)/rootdir/etc/fstab.mt6897:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.mt8792 \
+    $(DEVICE_PATH)/rootdir/etc/fstab.mt6897:$(TARGET_COPY_OUT_RECOVERY)/root/first_stage_ramdisk/fstab.mt6897 \
+    $(DEVICE_PATH)/rootdir/etc/fstab.mt6897:$(TARGET_COPY_OUT_RECOVERY)/root/first_stage_ramdisk/fstab.mt8792
