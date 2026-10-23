@@ -52,3 +52,8 @@ PRODUCT_COPY_FILES += \
     $(DEVICE_PATH)/prebuilt/firmware/novatek_ts_fw_tm.bin:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/vendor/firmware/novatek_ts_fw_tm.bin \
     $(DEVICE_PATH)/prebuilt/firmware/novatek_ts_mp_boe.bin:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/vendor/firmware/novatek_ts_mp_boe.bin \
     $(DEVICE_PATH)/prebuilt/firmware/novatek_ts_mp_tm.bin:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/vendor/firmware/novatek_ts_mp_tm.bin
+
+# Userspace fastboot, so "fastboot reboot fastboot" and fastbootd flashing of
+# logical partitions work from the recovery
+PRODUCT_PACKAGES += \
+    fastbootd

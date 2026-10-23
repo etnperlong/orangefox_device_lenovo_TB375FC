@@ -1,0 +1,13 @@
+#
+# Copyright (C) 2026 The LineageOS Project
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+# The bootloader reports ro.hardware=mt8792 (the DT is MT6897), so init loads
+# this file as init.recovery.${ro.hardware}.rc.
+
+on init
+    # UDC of the USB controller, as in the LineageOS recovery and the stock
+    # init.recovery.mt8792.rc; /sys/class/udc/ lists the same name.
+    setprop sys.usb.controller "11201000.usb0"

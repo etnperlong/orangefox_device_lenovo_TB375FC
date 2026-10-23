@@ -86,6 +86,9 @@ TARGET_RECOVERY_FSTAB   := $(DEVICE_PATH)/recovery.fstab
 TW_SKIP_ADDITIONAL_FSTAB := true
 RECOVERY_SDCARD_ON_DATA := true
 
+# USB: the device tree provides a configfs init.recovery.usb.rc
+TW_EXCLUDE_DEFAULT_USB_INIT := true
+
 # A/B
 AB_OTA_UPDATER := true
 AB_OTA_PARTITIONS += \
