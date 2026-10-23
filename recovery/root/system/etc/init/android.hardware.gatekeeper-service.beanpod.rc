@@ -1,0 +1,20 @@
+#
+# Copyright (C) 2026 The LineageOS Project
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+# Stock beanpod Gatekeeper HAL. It verifies the lock screen credential when
+# the recovery unlocks the credential encrypted storage of a user. Like
+# KeyMint it runs from the recovery's /system, which the ROM's partitions are
+# never mounted over.
+
+service vendor.gatekeeper-beanpod /system/bin/android.hardware.gatekeeper-service.beanpod
+    user root
+    group root
+    setenv LD_LIBRARY_PATH /system/lib64/beanpod:/system/lib64
+    disabled
+    seclabel u:r:recovery:s0
+
+on property:vendor.soter.teei.init=INIT_OK
+    start vendor.gatekeeper-beanpod

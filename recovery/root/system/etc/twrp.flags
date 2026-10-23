@@ -21,7 +21,11 @@
 /nvcfg           ext4    /dev/block/by-name/nvcfg                              flags=display="NVCfg";backup=1
 /protect_f       ext4    /dev/block/by-name/protect1                           flags=display="Protect_F";backup=1
 /protect_s       ext4    /dev/block/by-name/protect2                           flags=display="Protect_S";backup=1
-/persist         ext4    /dev/block/by-name/persist                            flags=display="Persist";backup=1
+# persist is also mounted read-only at /mnt/vendor/persist for the TEE daemon,
+# so the file system entry stays read-only and backups take the raw image,
+# as in the official mondrian tree.
+/persist         ext4    /dev/block/by-name/persist                            flags=display="Persist";fsflags=ro
+/persist_image   emmc    /dev/block/by-name/persist                            flags=display="Persist";backup=1
 
 # Internal storage
 /storage         f2fs    /data/media/0                                         flags=display="Internal Storage";usermrf;backup=1;fsflags="bind";removable

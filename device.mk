@@ -64,3 +64,14 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.boot@1.2-impl.recovery \
     bootctrl.default.recovery
+
+# beanpod TEE stack (recovery/root/system and recovery/root/vendor). The stock
+# vendor blobs were built against the v34 VNDK; libkeymaster_portable.so
+# imports the unprefixed BoringSSL stack API (sk_num, sk_value, sk_push,
+# sk_new_null) that only the v34 libcrypto.so exports. The LineageOS ROM
+# overlays the same v34 library onto /vendor/lib64 (tb375fc-vndk-overlay.mk).
+# Take it from the AOSP VNDK snapshot that the fox_16.0 manifest syncs, and
+# keep it next to the HAL libraries, away from the recovery's own
+# /system/lib64/libcrypto.so.
+PRODUCT_COPY_FILES += \
+    prebuilts/vndk/v34/arm64/arch-arm64-armv8-a/shared/vndk-core/libcrypto.so:$(TARGET_COPY_OUT_RECOVERY)/root/system/lib64/beanpod/libcrypto.so

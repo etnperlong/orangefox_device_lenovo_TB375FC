@@ -1,0 +1,30 @@
+#
+# Copyright (C) 2026 The LineageOS Project
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+# Stock beanpod KeyMint 3 HAL (IKeyMintDevice, IRemotelyProvisionedComponent,
+# ISecureClock, ISharedSecret). It needs the TEE daemon, so it starts once
+# teei_daemon reports INIT_OK.
+#
+# The binary and its libraries live in the recovery's /system, not /vendor:
+# before decryption the recovery mounts the ROM's vendor partition over
+# /vendor several times, and a HAL started then would load the ROM's binaries
+# and v34 VNDK libraries. The ROM's system partition is mounted at
+# /system_root, so /system always is the ramdisk.
+#
+# /system/lib64/beanpod comes first so libkeymaster_portable.so resolves the
+# unprefixed BoringSSL stack API (sk_num, sk_value, ...) from the v34
+# libcrypto.so installed there; the Android 16 libcrypto.so of the recovery
+# only exports the OPENSSL_sk_* names.
+
+service vendor.keymint-beanpod /system/bin/android.hardware.security.keymint@3.0-service.beanpod
+    user root
+    group root
+    setenv LD_LIBRARY_PATH /system/lib64/beanpod:/system/lib64
+    disabled
+    seclabel u:r:recovery:s0
+
+on property:vendor.soter.teei.init=INIT_OK
+    start vendor.keymint-beanpod
