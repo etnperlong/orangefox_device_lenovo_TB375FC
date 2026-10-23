@@ -45,6 +45,13 @@ if [ "$1" = "$FDEVICE" -o "$FOX_BUILD_DEVICE" = "$FDEVICE" ]; then
 	# that fragment (FOX_INSTALLER_VENDOR_BOOT_RAMDISK_INSTALL), which
 	# keeps the ROM's vendor_ramdisk00, DTB and cmdline.
 	export FOX_VENDOR_BOOT_RECOVERY=1
+
+	# Tools, the set of the official mondrian tree
+	export FOX_USE_BASH_SHELL=1
+	export FOX_USE_SED_BINARY=1
+	export FOX_USE_TAR_BINARY=1
+	export FOX_USE_NANO_EDITOR=1
+	export FOX_ENABLE_APP_MANAGER=1
 else
 	if [ -z "$FOX_BUILD_DEVICE" -a -z "$BASH_SOURCE" ]; then
 		echo "I: This script requires bash. Not processing the $FDEVICE $(basename $0)"

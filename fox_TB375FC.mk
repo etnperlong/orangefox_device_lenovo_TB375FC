@@ -31,3 +31,24 @@ OF_LANDSCAPE_MODE := 1
 # uniform (1840/1080 = 2944/1728). No display cutout: the status bar keeps
 # its default height.
 OF_SCREEN_H := 1728
+
+# Dynamic partitions: build lptools for the Super partition manager
+OF_ENABLE_LPTOOLS := 1
+
+# LineageOS is a Treble ROM; skip the legacy Treble check of zip installs
+OF_NO_TREBLE_COMPATIBILITY_CHECK := 1
+
+# Quick backup: both boot images the ROM updates, and data
+OF_QUICK_BACKUP_LIST := /boot;/vendor_boot;/data;
+
+# Data format with metadata encryption: unbind /sdcard before the f2fs
+# format, wipe /metadata afterwards so the ROM's vold creates a new metadata
+# key for the fresh userdata, and re-bind /sdcard for MTP.
+OF_UNBIND_SDCARD_F2FS := 1
+OF_WIPE_METADATA_AFTER_DATAFORMAT := 1
+OF_BIND_MOUNT_SDCARD_ON_FORMAT := 1
+
+# The torch is driven through the /dev/flashlight ioctl interface of the
+# MediaTek flashlight.ko on vendor_dlkm, which the recovery does not load;
+# there is no LED class node the recovery could switch.
+OF_FLASHLIGHT_ENABLE := 0
