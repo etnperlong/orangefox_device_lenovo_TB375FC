@@ -79,6 +79,13 @@ BOARD_AVB_ENABLE := true
 # Kernel modules
 include $(DEVICE_PATH)/tb375fc-kernel-modules.mk
 
+# Recovery fstab. The vendor fstab is not merged in: the recovery re-reads the
+# /data and /metadata lines of that "additional fstab", and its last /data line
+# is /dev/block/dm-userdata, which does not exist before the ROM's vold runs.
+TARGET_RECOVERY_FSTAB   := $(DEVICE_PATH)/recovery.fstab
+TW_SKIP_ADDITIONAL_FSTAB := true
+RECOVERY_SDCARD_ON_DATA := true
+
 # A/B
 AB_OTA_UPDATER := true
 AB_OTA_PARTITIONS += \

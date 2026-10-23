@@ -1,0 +1,30 @@
+# mount point    fstype  device                               device2          flags
+# Userdata/Metadata
+/metadata        f2fs    /dev/block/by-name/metadata                           flags=display="Metadata"
+
+# Boot chain. vendor_boot holds the ROM's vendor ramdisk and this recovery.
+/boot            emmc    /dev/block/by-name/boot                               flags=slotselect;display="Boot";backup=1;flashimg=1
+/init_boot       emmc    /dev/block/by-name/init_boot                          flags=slotselect;display="Init Boot";backup=1;flashimg=1
+/vendor_boot     emmc    /dev/block/by-name/vendor_boot                        flags=slotselect;display="Vendor Boot";backup=1;flashimg=1
+/dtbo            emmc    /dev/block/by-name/dtbo                               flags=slotselect;display="DTBO";backup=1;flashimg=1
+/vbmeta          emmc    /dev/block/by-name/vbmeta                             flags=slotselect;display="VBMeta";backup=1;flashimg=1
+/vbmeta_system   emmc    /dev/block/by-name/vbmeta_system                      flags=slotselect;display="VBMeta System";backup=1;flashimg=1
+/vbmeta_vendor   emmc    /dev/block/by-name/vbmeta_vendor                      flags=slotselect;display="VBMeta Vendor";backup=1;flashimg=1
+
+# Dynamic partitions: only super is offered for backup and restore
+/super           emmc    /dev/block/by-name/super                              flags=display="Super";backup=1;flashimg=1
+
+# MediaTek calibration and device data
+/nvram           emmc    /dev/block/by-name/nvram                              flags=display="NVRAM";backup=1;flashimg=1
+/proinfo         emmc    /dev/block/by-name/proinfo                            flags=display="Proinfo";backup=1;flashimg=1
+/nvdata          ext4    /dev/block/by-name/nvdata                             flags=display="NVData";backup=1
+/nvcfg           ext4    /dev/block/by-name/nvcfg                              flags=display="NVCfg";backup=1
+/protect_f       ext4    /dev/block/by-name/protect1                           flags=display="Protect_F";backup=1
+/protect_s       ext4    /dev/block/by-name/protect2                           flags=display="Protect_S";backup=1
+/persist         ext4    /dev/block/by-name/persist                            flags=display="Persist";backup=1
+
+# Internal storage
+/storage         f2fs    /data/media/0                                         flags=display="Internal Storage";usermrf;backup=1;fsflags="bind";removable
+
+# Removable storage. UFS takes sda-sdc (LU 0-2), so a USB drive is sdd.
+/usb_otg         auto    /dev/block/sdd1              /dev/block/sdd           flags=display="USB OTG";storage;wipeingui;removable;fsflags=utf8
