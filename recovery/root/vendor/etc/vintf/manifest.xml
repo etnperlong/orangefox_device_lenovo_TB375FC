@@ -1,0 +1,9 @@
+<!--
+    Device manifest of the recovery. servicemanager and hwservicemanager only
+    read the fragments in /vendor/etc/vintf/manifest/ when this file exists,
+    and refuse to register a HAL that no manifest declares. The HALs
+    themselves are declared by those fragments. target-level matches the
+    LineageOS device manifest (FCM 8).
+-->
+<manifest version="2.0" type="device" target-level="8">
+</manifest>

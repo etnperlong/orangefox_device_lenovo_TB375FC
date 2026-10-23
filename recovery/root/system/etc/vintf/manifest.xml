@@ -1,0 +1,8 @@
+<!--
+    Framework manifest of the recovery. Without it, the fragments in
+    /system/etc/vintf/manifest/ are not read, including the keystore2
+    declaration that OrangeFox installs there, and servicemanager refuses to
+    register keystore2.
+-->
+<manifest version="1.0" type="framework">
+</manifest>
