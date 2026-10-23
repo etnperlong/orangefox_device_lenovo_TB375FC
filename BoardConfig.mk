@@ -100,6 +100,34 @@ TW_BRIGHTNESS_PATH := "/sys/class/leds/lcd-backlight/brightness"
 TW_FRAMERATE := 60
 TW_EXTRA_LANGUAGES := true
 
+# OS version and patch levels reported by the recovery. The beanpod KeyMint
+# (libkeymint.so) reads ro.build.version.release,
+# ro.build.version.security_patch and ro.vendor.build.security_patch, and
+# every FBE and metadata key is bound to the values the ROM reported when
+# the key was created or last upgraded.
+#
+# - A lower value than the key's makes KeyMint refuse the key; decryption
+#   fails, but nothing is written.
+# - A higher value makes KeyMint return an upgraded key blob, which vold
+#   commits to /metadata and /data (system/vold KeyStorage.cpp). The ROM,
+#   reporting the lower value again, can then no longer use the key.
+#
+# So unlike the 99.87.36 / 2099-12-31 convention of many trees, never report
+# more than the ROM. The OS version is LineageOS 24.0 (Android 17). The OS
+# patch level defaults to the vendor patch level, which is below every
+# LineageOS 24.0 build (its cp2a release starts at 2026-06-05), so a stale
+# default can only fail closed. The vendor patch level is the one the
+# LineageOS tree fixes at 2026-05-05.
+PLATFORM_VERSION             := 17
+PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
+VENDOR_SECURITY_PATCH        := 2026-05-05
+PLATFORM_SECURITY_PATCH      := $(VENDOR_SECURITY_PATCH)
+
+# First API level of the stock vendor, as in the LineageOS tree
+# (ro.board.first_api_level; ro.product.first_api_level comes from
+# PRODUCT_SHIPPING_API_LEVEL).
+BOARD_SHIPPING_API_LEVEL := 34
+
 # A/B
 AB_OTA_UPDATER := true
 AB_OTA_PARTITIONS += \
