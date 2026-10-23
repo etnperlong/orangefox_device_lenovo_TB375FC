@@ -163,6 +163,11 @@ TW_LOAD_VENDOR_MODULES := "nt36532.ko"
 # ramdisk and needs none of them.
 TW_EXCLUDE_APEX := true
 
+# logd and logcat. teei_daemon, KeyMint, keystore2 and vold report decryption
+# failures only to logcat, not to the recovery log.
+TWRP_INCLUDE_LOGCAT := true
+TARGET_USES_LOGD    := true
+
 # A/B
 AB_OTA_UPDATER := true
 AB_OTA_PARTITIONS += \
