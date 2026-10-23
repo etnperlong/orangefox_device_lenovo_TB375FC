@@ -6,7 +6,9 @@
 
 # Stock beanpod KeyMint 3 HAL (IKeyMintDevice, IRemotelyProvisionedComponent,
 # ISecureClock, ISharedSecret). It needs the TEE daemon, so it starts once
-# teei_daemon reports INIT_OK.
+# teei_daemon reports INIT_OK. It reads the OS and vendor patch levels when it
+# starts, so it also waits for twrp.modules.loaded, which the recovery sets
+# after replacing both patch levels with the ROM's values.
 #
 # The binary and its libraries live in the recovery's /system, not /vendor:
 # before decryption the recovery mounts the ROM's vendor partition over
@@ -26,5 +28,5 @@ service vendor.keymint-beanpod /system/bin/android.hardware.security.keymint@3.0
     disabled
     seclabel u:r:recovery:s0
 
-on property:vendor.soter.teei.init=INIT_OK
+on property:vendor.soter.teei.init=INIT_OK && property:twrp.modules.loaded=true
     start vendor.keymint-beanpod

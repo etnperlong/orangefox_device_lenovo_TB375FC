@@ -117,7 +117,9 @@ TW_EXTRA_LANGUAGES := true
 # patch level defaults to the vendor patch level, which is below every
 # LineageOS 24.0 build (its cp2a release starts at 2026-06-05), so a stale
 # default can only fail closed. The vendor patch level is the one the
-# LineageOS tree fixes at 2026-05-05.
+# LineageOS tree fixes at 2026-05-05. Before decryption the recovery replaces
+# both patch levels with the values in the ROM's /system and /vendor
+# build.prop (see Decryption below).
 PLATFORM_VERSION             := 17
 PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
 VENDOR_SECURITY_PATCH        := 2026-05-05
@@ -131,6 +133,35 @@ BOARD_SHIPPING_API_LEVEL := 34
 # The v34 libcrypto.so of the TEE stack is an ELF installed with
 # PRODUCT_COPY_FILES (device.mk).
 BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
+
+# Decryption: FBEv2 (aes-256-xts:aes-256-cts:v2+inlinecrypt_optimized) with
+# metadata encryption, keys in KeyMint on the beanpod TEE. fscrypt policy v2 is
+# the default.
+TW_INCLUDE_CRYPTO               := true
+TW_INCLUDE_CRYPTO_FBE           := true
+TW_INCLUDE_FBE_METADATA_DECRYPT := true
+
+# Read the ROM's real patch levels before decryption. With TW_INCLUDE_CRYPTO,
+# KernelModuleLoader::Load_Vendor_Modules() mounts /vendor and the system
+# partition and resets ro.vendor.build.security_patch and
+# ro.build.version.security_patch from their build.prop. It runs from
+# Process_Fstab(), before Setup_Fstab_Partitions() decrypts /data, and sets
+# twrp.modules.loaded=true when done; KeyMint waits for that property. The
+# recovery mounts the ROM's /vendor again before decryption, which is why
+# KeyMint runs from the recovery's /system.
+#
+# The loader only runs when TW_LOAD_VENDOR_MODULES names a module. The touch
+# driver is named because first-stage init has already loaded it from
+# vendor_ramdisk00, so the loader loads nothing; it only copies the module
+# directories of the ROM's /vendor and /vendor_dlkm to /tmp before noticing.
+# TW_LOAD_VENDOR_BOOT_MODULES must stay unset; with it the loader checks the
+# vendor_boot modules first, sees them all loaded and returns before reading
+# the patch levels.
+TW_LOAD_VENDOR_MODULES := "nt36532.ko"
+
+# The ROM's APEXes are Android 17 builds; the TEE stack lives in the recovery
+# ramdisk and needs none of them.
+TW_EXCLUDE_APEX := true
 
 # A/B
 AB_OTA_UPDATER := true
