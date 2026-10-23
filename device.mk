@@ -9,6 +9,19 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit_only.mk)
 
+# Virtual A/B with compression, as in the LineageOS tree. Besides the
+# ro.virtual_ab.* properties this puts snapuserd, the linker and the fsck
+# tools into vendor_ramdisk00, which first-stage init needs to boot the ROM
+# from a snapshot.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota/compression.mk)
+
+# Project quotas and casefolding, so that formatting data in the recovery
+# matches what the ROM's vold expects.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
+
+# Dynamic partitions
+PRODUCT_USE_DYNAMIC_PARTITIONS := true
+
 PRODUCT_SOONG_NAMESPACES += \
     $(DEVICE_PATH)
 
