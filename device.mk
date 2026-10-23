@@ -22,6 +22,10 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
 # Dynamic partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
+# The tree ships no kernel, so the OTA kernel VINTF check has no kernel to
+# read the release and config from.
+PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := false
+
 PRODUCT_SOONG_NAMESPACES += \
     $(DEVICE_PATH)
 

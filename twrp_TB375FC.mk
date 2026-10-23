@@ -12,6 +12,9 @@ DEVICE_PATH := device/lenovo/$(PRODUCT_RELEASE_NAME)
 # Inherit from the device configuration
 $(call inherit-product, $(DEVICE_PATH)/device.mk)
 
+# Inherit the OrangeFox-specific settings
+$(call inherit-product, $(DEVICE_PATH)/fox_TB375FC.mk)
+
 # Inherit the common TWRP/OrangeFox product configuration
 $(call inherit-product, vendor/twrp/config/common.mk)
 

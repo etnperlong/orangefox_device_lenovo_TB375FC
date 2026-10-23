@@ -39,6 +39,12 @@ if [ "$1" = "$FDEVICE" -o "$FOX_BUILD_DEVICE" = "$FDEVICE" ]; then
 	export FOX_VIRTUAL_AB_DEVICE=1
 	export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
 	export FOX_RECOVERY_VENDOR_PARTITION="/dev/block/mapper/vendor"
+
+	# The recovery is the "recovery" ramdisk fragment of a header v4
+	# vendor_boot. With header v4 the installer defaults to flashing only
+	# that fragment (FOX_INSTALLER_VENDOR_BOOT_RAMDISK_INSTALL), which
+	# keeps the ROM's vendor_ramdisk00, DTB and cmdline.
+	export FOX_VENDOR_BOOT_RECOVERY=1
 else
 	if [ -z "$FOX_BUILD_DEVICE" -a -z "$BASH_SOURCE" ]; then
 		echo "I: This script requires bash. Not processing the $FDEVICE $(basename $0)"
