@@ -89,6 +89,17 @@ RECOVERY_SDCARD_ON_DATA := true
 # USB: the device tree provides a configfs init.recovery.usb.rc
 TW_EXCLUDE_DEFAULT_USB_INIT := true
 
+# Display: 12.7" 2944x1840 LCD, native landscape. OrangeFox draws its portrait
+# theme on a 270 degree rotated canvas (OF_LANDSCAPE_MODE in fox_TB375FC.mk),
+# so TW_ROTATION must stay unset: a valid TW_ROTATION takes precedence over
+# OF_LANDSCAPE_MODE.
+TW_THEME := portrait_hdpi
+# Same format as the LineageOS recovery (DRM XBGR8888).
+TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
+TW_BRIGHTNESS_PATH := "/sys/class/leds/lcd-backlight/brightness"
+TW_FRAMERATE := 60
+TW_EXTRA_LANGUAGES := true
+
 # A/B
 AB_OTA_UPDATER := true
 AB_OTA_PARTITIONS += \
