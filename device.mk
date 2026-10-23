@@ -42,3 +42,13 @@ PRODUCT_COPY_FILES += \
     $(DEVICE_PATH)/rootdir/etc/fstab.mt6897:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.mt8792 \
     $(DEVICE_PATH)/rootdir/etc/fstab.mt6897:$(TARGET_COPY_OUT_RECOVERY)/root/first_stage_ramdisk/fstab.mt6897 \
     $(DEVICE_PATH)/rootdir/etc/fstab.mt6897:$(TARGET_COPY_OUT_RECOVERY)/root/first_stage_ramdisk/fstab.mt8792
+
+# Novatek NT36532 touch firmware. nt36532.ko requests it during first-stage
+# init, before any /vendor is mounted, so the kernel loader finds it only in
+# vendor_ramdisk00 at /vendor/firmware (firmware_class.path). In normal boot
+# the real /vendor mount hides the copy.
+PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/prebuilt/firmware/novatek_ts_fw_boe.bin:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/vendor/firmware/novatek_ts_fw_boe.bin \
+    $(DEVICE_PATH)/prebuilt/firmware/novatek_ts_fw_tm.bin:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/vendor/firmware/novatek_ts_fw_tm.bin \
+    $(DEVICE_PATH)/prebuilt/firmware/novatek_ts_mp_boe.bin:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/vendor/firmware/novatek_ts_mp_boe.bin \
+    $(DEVICE_PATH)/prebuilt/firmware/novatek_ts_mp_tm.bin:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/vendor/firmware/novatek_ts_mp_tm.bin
