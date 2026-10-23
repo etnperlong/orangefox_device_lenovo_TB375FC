@@ -76,6 +76,9 @@ BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE         := 67108864
 # AVB: vendor_boot gets a hash footer like the LineageOS image.
 BOARD_AVB_ENABLE := true
 
+# Kernel modules
+include $(DEVICE_PATH)/tb375fc-kernel-modules.mk
+
 # A/B
 AB_OTA_UPDATER := true
 AB_OTA_PARTITIONS += \
