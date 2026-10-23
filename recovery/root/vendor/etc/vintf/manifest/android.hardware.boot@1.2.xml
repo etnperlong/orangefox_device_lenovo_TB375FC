@@ -1,0 +1,12 @@
+<!--
+    Boot control HAL of the recovery. Without this declaration
+    hwservicemanager refuses the registration of boot-hal-1-2 and init
+    restarts it in a loop. @1.2 also serves @1.0/@1.1 clients.
+-->
+<manifest version="1.0" type="device">
+    <hal format="hidl">
+        <name>android.hardware.boot</name>
+        <transport>hwbinder</transport>
+        <fqname>@1.2::IBootControl/default</fqname>
+    </hal>
+</manifest>

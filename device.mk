@@ -57,3 +57,10 @@ PRODUCT_COPY_FILES += \
 # logical partitions work from the recovery
 PRODUCT_PACKAGES += \
     fastbootd
+
+# Boot control HAL. The stock AIDL android.hardware.boot-service.mtk lives on
+# /vendor; the LineageOS recovery switches slots with the AOSP passthrough
+# HAL on top of the misc-based bootctrl.default instead.
+PRODUCT_PACKAGES += \
+    android.hardware.boot@1.2-impl.recovery \
+    bootctrl.default.recovery

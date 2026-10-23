@@ -11,3 +11,8 @@ on init
     # UDC of the USB controller, as in the LineageOS recovery and the stock
     # init.recovery.mt8792.rc; /sys/class/udc/ lists the same name.
     setprop sys.usb.controller "11201000.usb0"
+
+    # Boot control HAL for slot switching. It is the AOSP misc-based
+    # implementation (bootctrl.default), which the LineageOS recovery uses on
+    # this device.
+    start boot-hal-1-2
