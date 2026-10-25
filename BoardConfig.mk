@@ -100,30 +100,26 @@ TW_BRIGHTNESS_PATH := "/sys/class/leds/lcd-backlight/brightness"
 TW_FRAMERATE := 60
 TW_EXTRA_LANGUAGES := true
 
-# OS version and patch levels reported by the recovery. The beanpod KeyMint
-# (libkeymint.so) reads ro.build.version.release,
-# ro.build.version.security_patch and ro.vendor.build.security_patch, and
-# every FBE and metadata key is bound to the values the ROM reported when
-# the key was created or last upgraded.
+# Build-time placeholders used by the official OrangeFox reference trees.
+# 99.87.36 is accepted by the CTS version check, not the installed ROM's OS
+# version. The future patch levels must never reach beanpod KeyMint either:
+# vold can persist upgraded key blobs that the ROM can no longer decrypt.
 #
-# - A lower value than the key's makes KeyMint refuse the key; decryption
-#   fails, but nothing is written.
-# - A higher value makes KeyMint return an upgraded key blob, which vold
-#   commits to /metadata and /data (system/vold KeyStorage.cpp). The ROM,
-#   reporting the lower value again, can then no longer use the key.
-#
-# So unlike the 99.87.36 / 2099-12-31 convention of many trees, never report
-# more than the ROM. The OS version is LineageOS 24.0 (Android 17). The OS
-# patch level defaults to the vendor patch level, which is below every
-# LineageOS 24.0 build (its cp2a release starts at 2026-06-05), so a stale
-# default can only fail closed. The vendor patch level is the one the
-# LineageOS tree fixes at 2026-05-05. Before decryption the recovery replaces
-# both patch levels with the values in the ROM's /system and /vendor
-# build.prop (see Decryption below).
-PLATFORM_VERSION             := 17
-PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
-VENDOR_SECURITY_PATCH        := 2026-05-05
+# beforemodules.sh reads the active ROM's system and vendor build.prop,
+# restores all three KeyMint version properties, and verifies them before
+# opening a separate init gate. Any failure leaves KeyMint disabled; there
+# is no build-time fallback for decryption. The ramdisk preparation hook
+# below also prevents foxstart.sh from replacing the verified OS release.
+PLATFORM_VERSION             := 99.87.36
+PLATFORM_VERSION_LAST_STABLE := 99.87.36
+VENDOR_SECURITY_PATCH        := 2099-12-31
 PLATFORM_SECURITY_PATCH      := $(VENDOR_SECURITY_PATCH)
+
+# Specialize only the generated ramdisk; leave the upstream source intact.
+# The helper checks the reviewed foxstart.sh source and updates its ramdisk
+# checksum. An upstream change requires review instead of silently dropping
+# the protection. Android.mk declares the helper and source dependencies.
+BOARD_RECOVERY_IMAGE_PREPARE += python3 $(DEVICE_PATH)/tools/prepare-recovery.py --ramdisk "$(TARGET_RECOVERY_ROOT_OUT)" --source vendor/recovery/FoxExtras/sbin/foxstart.sh
 
 # First API level of the stock vendor, as in the LineageOS tree
 # (ro.board.first_api_level; ro.product.first_api_level comes from
@@ -141,14 +137,13 @@ TW_INCLUDE_CRYPTO               := true
 TW_INCLUDE_CRYPTO_FBE           := true
 TW_INCLUDE_FBE_METADATA_DECRYPT := true
 
-# Read the ROM's real patch levels before decryption. With TW_INCLUDE_CRYPTO,
-# KernelModuleLoader::Load_Vendor_Modules() mounts /vendor and the system
-# partition and resets ro.vendor.build.security_patch and
-# ro.build.version.security_patch from their build.prop. It runs from
-# Process_Fstab(), before Setup_Fstab_Partitions() decrypts /data, and sets
-# twrp.modules.loaded=true when done; KeyMint waits for that property. The
-# recovery mounts the ROM's /vendor again before decryption, which is why
-# KeyMint runs from the recovery's /system.
+# Load_Vendor_Modules() synchronously runs beforemodules.sh from
+# Process_Fstab(), before Setup_Fstab_Partitions() first decrypts /data.
+# Our hook restores the ROM OS release and both patch levels and fails
+# closed. The loader then reads the same ROM patch levels and finally sets
+# twrp.modules.loaded=true. KeyMint requires both completion gates and the
+# TEE daemon's INIT_OK. It runs from the recovery's /system so mounting the
+# ROM's /vendor during decryption cannot replace its binaries or libraries.
 #
 # The loader only runs when TW_LOAD_VENDOR_MODULES names a module. The touch
 # driver is named because first-stage init has already loaded it from

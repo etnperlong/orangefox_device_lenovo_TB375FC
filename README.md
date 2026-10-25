@@ -104,18 +104,70 @@ mapping.
 
 KeyMint binds each key to the OS version and the OS and vendor patch levels it
 reads from `ro.build.version.release`, `ro.build.version.security_patch` and
-`ro.vendor.build.security_patch`. A lower value than the key's makes KeyMint
-refuse the key. A higher value upgrades the key, and vold writes the upgraded
-blob back, after which the ROM can no longer use it. The recovery therefore
-reports exactly what the ROM reports:
+`ro.vendor.build.security_patch`. A higher value can upgrade a key blob that
+vold writes back to `/metadata` or `/data`, leaving the ROM unable to use it.
 
-- OS version `17`, set at build time.
-- Patch levels default to `2026-05-05`, the vendor patch level of the LineageOS
-  tree. That is below every LineageOS 24.0 system patch level, so a stale
-  default makes decryption fail instead of upgrading a key.
-- Before decryption, the recovery reads the real values from the ROM's
-  `/system` and `/vendor` `build.prop` (`TW_INCLUDE_CRYPTO` together with
-  `TW_LOAD_VENDOR_MODULES`) and only then starts KeyMint.
+The build follows the official OrangeFox reference convention:
+`PLATFORM_VERSION` and `PLATFORM_VERSION_LAST_STABLE` are `99.87.36`, and both
+security patch defaults are `2099-12-31`. The version passes the CTS build-time
+allowlist check. None of these placeholders is a decryption fallback.
+
+Before the first `Decrypt_Data()`, the vendor-module loader synchronously runs
+the device's `/system/bin/beforemodules.sh`. It mounts the active-slot
+`/dev/block/by-name/system` and `/dev/block/by-name/vendor` mappings at private
+paths under `/tmp/twrp-romprops`, never over the recovery's `/system` or
+`/vendor`. Mounts are read-only; ext4 also uses `noload` to prevent journal
+replay. It reads the system release and system patch from `system/build.prop`,
+and the vendor patch from `vendor`'s `build.prop`, without sourcing either
+file. All three fields must be unique, valid, and different from the build
+placeholders. The helper resets all three properties, checks their live
+values, and unmounts its private mounts before setting
+`twrp.keymint.props_ready=true`. It also requires the marker installed by the
+ramdisk policy below, so a missing packaging adaptation cannot open the gate.
+
+KeyMint is disabled until that property, `twrp.modules.loaded=true`, and the
+TEE daemon's `INIT_OK` are all present. A missing helper, missing tool,
+unreadable or invalid ROM property, mount/unmount failure, reset failure, or
+readback mismatch leaves the property gate closed. The loader ignores the
+hook's exit status, so the separate init gate is essential. The loader's
+existing patch resets still run afterward and read the same ROM values;
+they cannot substitute for the three-property check. Neither the helper nor
+its failure handling reads or writes the ROM's key directories.
+
+OrangeFox's normal `foxstart.sh` would later replace the global OS release
+with a vendor-preferred value. `tools/prepare-recovery.py`, invoked through
+`BOARD_RECOVERY_IMAGE_PREPARE`, removes only that assignment from the
+**generated recovery ramdisk**, retaining ROM detection, OrangeFox metadata,
+and the rest of startup. It does not edit `vendor/recovery` or any other
+upstream source repository. The helper requires the reviewed upstream script
+from `vendor/recovery@744dc8f61e697085f38eba353814ec903ea18933`; unexpected
+source or generated content fails the build. It also refreshes the ramdisk
+checksum entry, and the build dependency includes both scripts so an
+incremental build reruns the policy. This keeps the verified system OS release
+in effect for later KeyMint restarts without skipping OrangeFox initialization.
+
+The design is inspired by Qualcomm's `prepdecrypt` property preparation, but
+does not import its HALs or its error path that still signals crypto readiness.
+These are source-level safety measures, not proof of a complete build or
+on-device decryption.
+
+For the first device test:
+
+1. Back up data and keep the original `vendor_boot` available, or test only
+   where data loss is acceptable. The recovery attempts metadata decryption
+   during startup, before an ADB session can inspect its properties.
+2. In recovery, check `getprop twrp.keymint.props_ready` is `true`. Check
+   `getprop ro.build.version.release` matches the installed ROM (`17` for the
+   current ROM), and both `getprop ro.build.version.security_patch` and
+   `getprop ro.vendor.build.security_patch` match that ROM's property files,
+   not `2099-12-31`. The current vendor baseline is `2026-05-05`.
+3. Save `adb logcat -b all -d` and inspect KeyMint, keystore2, and vold for
+   `KEY_REQUIRES_UPGRADE`, `upgradeKey`, and other decryption errors. Missing
+   upgrade messages alone are not proof that no key was changed. If the gate
+   is not `true`, keep KeyMint stopped; do not force-start it or force the
+   readiness property.
+4. After testing recovery decryption, reboot to the ROM and confirm the
+   existing credentials still unlock it.
 
 The TEE stack (`teei_daemon`, KeyMint, Gatekeeper, their libraries, the trusted
 applications and the VINTF fragments) comes from the stock vendor image that

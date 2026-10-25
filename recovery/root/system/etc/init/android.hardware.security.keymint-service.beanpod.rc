@@ -4,11 +4,14 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-# Stock beanpod KeyMint 3 HAL (IKeyMintDevice, IRemotelyProvisionedComponent,
-# ISecureClock, ISharedSecret). It needs the TEE daemon, so it starts once
-# teei_daemon reports INIT_OK. It reads the OS and vendor patch levels when it
-# starts, so it also waits for twrp.modules.loaded, which the recovery sets
-# after replacing both patch levels with the ROM's values.
+# Stock beanpod KeyMint 3 HAL, shared secret, secure clock, and RKP services.
+# Keep KeyMint closed until beforemodules.sh has read and verified all three
+# current-ROM build properties, including the required foxstart adaptation.
+# The nonpersistent gate stays false if any preparation step fails.
+#
+# The service is deliberately disabled and has no class/interface start path.
+# beforemodules.sh sets the marker only after restoring the ROM's OS release,
+# system patch level, and vendor patch level, then verifies each property.
 #
 # The binary and its libraries live in the recovery's /system, not /vendor:
 # before decryption the recovery mounts the ROM's vendor partition over
@@ -21,6 +24,9 @@
 # libcrypto.so installed there; the Android 16 libcrypto.so of the recovery
 # only exports the OPENSSL_sk_* names.
 
+on init
+    setprop twrp.keymint.props_ready false
+
 service vendor.keymint-beanpod /system/bin/android.hardware.security.keymint@3.0-service.beanpod
     user root
     group root
@@ -28,5 +34,5 @@ service vendor.keymint-beanpod /system/bin/android.hardware.security.keymint@3.0
     disabled
     seclabel u:r:recovery:s0
 
-on property:vendor.soter.teei.init=INIT_OK && property:twrp.modules.loaded=true
+on property:vendor.soter.teei.init=INIT_OK && property:twrp.modules.loaded=true && property:twrp.keymint.props_ready=true
     start vendor.keymint-beanpod
