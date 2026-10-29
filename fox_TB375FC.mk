@@ -52,3 +52,10 @@ OF_BIND_MOUNT_SDCARD_ON_FORMAT := 1
 # MediaTek flashlight.ko on vendor_dlkm, which the recovery does not load;
 # there is no LED class node the recovery could switch.
 OF_FLASHLIGHT_ENABLE := 0
+
+# Battery level from sysfs. The default path asks the health HAL, which the
+# recovery doesn't run (no IHealth in its VINTF manifest, no hwservicemanager),
+# so GetBatteryInfo() falls back to a fake 100%. The mm8013 fuel gauge in
+# vendor_ramdisk00 registers /sys/class/power_supply/battery, the default
+# legacy path, with capacity and status in the recovery too.
+OF_USE_LEGACY_BATTERY_SERVICES := 1
