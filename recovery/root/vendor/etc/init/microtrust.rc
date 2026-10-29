@@ -42,6 +42,33 @@ service teei_daemon /vendor/bin/teei_daemon \
     disabled
     seclabel u:r:recovery:s0
 
+# TEE device nodes, set like the stock microtrust.rc does before it starts the
+# daemon. teei_daemon drops to system after its own setup and only then opens
+# the UFS RPMB node. The Gatekeeper TA binds its failure records to RPMB and
+# sets RPMB up once, when it loads at INIT_OK; with the node left root 0600 it
+# logs "rpmb_open: Failed" and every verify fails with "search uid failed".
+on fs
+    chmod 0660 /dev/teei_client
+    chown system system /dev/teei_client
+    chmod 0660 /dev/teei_config
+    chown system system /dev/teei_config
+    chmod 0666 /dev/isee_tee0
+    chown system drmrpc /dev/isee_tee0
+    chmod 0660 /dev/tz_vfs
+    chown system system /dev/tz_vfs
+    chmod 0660 /dev/teei_fp
+    chown system /dev/teei_fp
+    chown system drmrpc /dev/ut_keymaster
+    chmod 0660 /dev/ut_keymaster
+    chmod 0660 /dev/0:0:0:49476
+    chown system system /dev/0:0:0:49476
+    chmod 0660 /dev/rpmb0
+    chown system system /dev/rpmb0
+    chmod 0660 /dev/mmcblk0rpmb
+    chown root system /dev/mmcblk0rpmb
+    chmod 0660 /dev/emmcrpmb0
+    chown system system /dev/emmcrpmb0
+
 # libteei_daemon_vfs.so reads the RPMB state from
 # /mnt/vendor/persist/rpmb/rpmb.txt, and stock has persist mounted when the
 # daemon starts. Mount it read-only: the recovery only needs the existing

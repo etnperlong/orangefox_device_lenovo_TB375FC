@@ -172,12 +172,17 @@ For the first device test:
 The TEE stack (`teei_daemon`, KeyMint, Gatekeeper, their libraries, the trusted
 applications and the VINTF fragments) comes from the stock vendor image that
 the LineageOS tree uses. `teei_daemon` stays in `/vendor` and starts on `fs`
-with `persist` mounted read-only at `/mnt/vendor/persist`, where it reads its
-RPMB state. KeyMint and Gatekeeper run from `/system/bin` with their libraries
-in `/system/lib64/beanpod`: before decryption the recovery mounts the ROM's
-vendor partition over `/vendor` more than once, while `/system` always stays
-the ramdisk. They use the v34 `libcrypto.so` that the ROM also uses for these
-blobs.
+with `persist` mounted read-only at `/mnt/vendor/persist`, its fallback for a
+virtual RPMB. This tablet uses the UFS RPMB unit (`/dev/0:0:0:49476`), which
+the daemon opens only after it has dropped to `system`. The recovery therefore
+sets the TEE and RPMB device nodes to the stock owners and modes before it
+starts the daemon: the Gatekeeper TA binds its failure records to RPMB, sets
+RPMB up once when it loads, and otherwise fails every verify with
+`search uid failed`. KeyMint and Gatekeeper run from `/system/bin` with their
+libraries in `/system/lib64/beanpod`: before decryption the recovery mounts the
+ROM's vendor partition over `/vendor` more than once, while `/system` always
+stays the ramdisk. They use the v34 `libcrypto.so` that the ROM also uses for
+these blobs.
 
 The recovery's VINTF main manifests (`/vendor/etc/vintf/manifest.xml` and
 `/system/etc/vintf/manifest.xml`) are minimal. They exist so that
