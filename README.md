@@ -189,7 +189,9 @@ The recovery's VINTF main manifests (`/vendor/etc/vintf/manifest.xml` and
 servicemanager reads the HAL fragments; without them no HAL can register.
 
 Check `adb logcat` in the recovery when decryption fails: `teei_daemon`,
-KeyMint, keystore2 and vold only log there.
+KeyMint, keystore2 and vold only log there. The recovery ships
+`task_profiles.json` for this: without it logd aborts at startup and logcat
+has nothing to read.
 
 ## Sources
 

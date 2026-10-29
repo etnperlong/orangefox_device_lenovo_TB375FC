@@ -75,3 +75,11 @@ PRODUCT_PACKAGES += \
 # /system/lib64/libcrypto.so.
 PRODUCT_COPY_FILES += \
     prebuilts/vndk/v34/arm64/arch-arm64-armv8-a/shared/vndk-core/libcrypto.so:$(TARGET_COPY_OUT_RECOVERY)/root/system/lib64/beanpod/libcrypto.so
+
+# Task profiles for logd (TARGET_USES_LOGD). logd's DropPrivs() aborts with
+# PLOG(FATAL) when set_sched_policy(SP_BACKGROUND) fails, and that needs the
+# SCHED_SP_BACKGROUND profile. The task_profiles.json module has no recovery
+# variant, so copy the file of the same libprocessgroup the recovery's logd
+# is built with.
+PRODUCT_COPY_FILES += \
+    system/core/libprocessgroup/profiles/task_profiles.json:$(TARGET_COPY_OUT_RECOVERY)/root/system/etc/task_profiles.json
