@@ -96,7 +96,12 @@ TW_EXCLUDE_DEFAULT_USB_INIT := true
 TW_THEME := portrait_hdpi
 # Same format as the LineageOS recovery (DRM XBGR8888).
 TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
+# Backlight: the MediaTek lcd-backlight LED class node takes 0-4095
+# (its max_brightness in the recovery). Start at half of it, the normal
+# brightness of the AOSP recovery UI that the LineageOS recovery keeps (50%).
 TW_BRIGHTNESS_PATH := "/sys/class/leds/lcd-backlight/brightness"
+TW_MAX_BRIGHTNESS := 4095
+TW_DEFAULT_BRIGHTNESS := 2048
 TW_FRAMERATE := 60
 TW_EXTRA_LANGUAGES := true
 
