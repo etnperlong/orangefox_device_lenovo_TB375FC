@@ -5,7 +5,11 @@ OrangeFox Recovery (`fox_16.0`, Android 16) for the Lenovo Xiaoxin Pad Pro
 24.0 (Android 17) device tree for the same tablet, and the recovery is meant to
 run alongside that ROM.
 
-**Status:** this tree has not been built or tested on a device yet.
+**Status:** tested on DerpFest 17 (2026-10-28 build): the recovery boots and
+decrypts user 0 with a PIN. The ROM's `init_boot` must hold only the generic
+ramdisk allow list. The bootloader loads it after `vendor_boot`, so a
+`system/lib64` in it (libc, libm, libdl, ld-android of the ROM's Android
+version) replaces this recovery's bionic and its init crashes on boot.
 
 | | |
 |---|---|
