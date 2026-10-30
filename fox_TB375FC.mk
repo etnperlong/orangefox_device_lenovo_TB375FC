@@ -26,11 +26,15 @@ OF_USE_LZ4_COMPRESSION := 1
 # it.
 OF_LANDSCAPE_MODE := 1
 
-# Screen height in theme units for a 1080-unit wide theme: the logical canvas
-# is 1840x2944 (9:14.4), so 14.4 * 120 = 1728. This keeps the theme scaling
-# uniform (1840/1080 = 2944/1728). No display cutout: the status bar keeps
-# its default height.
-OF_SCREEN_H := 1728
+# Screen height in theme units for the 1080-unit wide theme. The logical
+# canvas is 1840x2944, so 1728 would scale both axes by 1.70 (1840/1080) and
+# draw a magnified phone layout. 2304 keeps the horizontal scale and lowers the
+# vertical scale, and with it fonts and aspect-locked icons (they follow the
+# smaller scale), to 2944/2304 = 1.28: text and icons are 75% of the uniform
+# size and lists show more rows. Elements without retainaspect (key and dialog
+# backgrounds, progress bars) are stretched 1.33x horizontally. No display
+# cutout: the status bar keeps its default height.
+OF_SCREEN_H := 2304
 
 # Dynamic partitions: build lptools for the Super partition manager
 OF_ENABLE_LPTOOLS := 1

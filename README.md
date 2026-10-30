@@ -98,7 +98,15 @@ already reports portrait coordinates, and the rotated renderer maps logical
 `(u, v)` to panel `(v, 1839 - u)`, the same transform as the LineageOS
 recovery's `ROTATION_RIGHT`. No `RECOVERY_TOUCHSCREEN_*` flags are needed, and
 `TW_ROTATION` must stay unset because it takes precedence over
-`OF_LANDSCAPE_MODE`. `OF_SCREEN_H := 1728` keeps the theme scaling uniform.
+`OF_LANDSCAPE_MODE`.
+
+`OF_SCREEN_H := 2304` sets the UI density. The theme is 1080 units wide, so the
+horizontal scale is fixed at 1840/1080 = 1.70; the uniform height would be
+1728. A taller theme height lowers the vertical scale to 2944/2304 = 1.28, and
+fonts and aspect-locked icons follow the smaller scale, so they are 75% of the
+uniform size while the layout still spans the full width. Elements without
+`retainaspect` are stretched 1.33x horizontally. The value was chosen from an
+on-device preview against 1728.
 
 If the UI comes up rotated the wrong way, `persist.twrp.rotation` (0, 90, 180
 or 270) overrides the default rotation at runtime; it does not change the touch
