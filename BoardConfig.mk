@@ -105,6 +105,9 @@ TW_DEFAULT_BRIGHTNESS := 2048
 TW_FRAMERATE := 60
 TW_EXTRA_LANGUAGES := true
 
+# This tablet has no vibration motor. Compile out recovery haptic feedback.
+TW_NO_HAPTICS := true
+
 # Build-time placeholders used by the official OrangeFox reference trees.
 # 99.87.36 is accepted by the CTS version check, not the installed ROM's OS
 # version. The future patch levels must never reach beanpod KeyMint either:

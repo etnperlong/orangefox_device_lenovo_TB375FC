@@ -77,6 +77,15 @@ partition; the full `vendor_boot.img` of the same build must have passed it.
 Every LineageOS update writes a new `vendor_boot` with the LineageOS recovery
 to the updated slot. Flash the fragment again after an update.
 
+`OF_NO_REFLASH_CURRENT_ORANGEFOX := 1` hides the automatic and manual
+reflash controls. The upstream `fox_16.0` post-ROM dispatcher does not check
+this flag: `tw_auto_reflashtwrp=1` (including the upstream default or a saved
+setting) can still trigger a whole-image copy from the old slot. This is
+UI-only suppression, not a complete disablement. Set the preference to `0`
+in the old recovery before upgrading to a build that hides the controls.
+Preserve the updated ROM's platform ramdisk by reinstalling only the recovery
+fragment, rather than copying the old slot's entire `vendor_boot`.
+
 ## Design notes
 
 ### vendor_boot
@@ -111,6 +120,13 @@ on-device preview against 1728.
 If the UI comes up rotated the wrong way, `persist.twrp.rotation` (0, 90, 180
 or 270) overrides the default rotation at runtime; it does not change the touch
 mapping.
+
+### Haptic feedback
+
+The tablet has no vibration motor. `TW_NO_HAPTICS := true` compiles out
+recovery haptic feedback, hides the vibration controls and avoids accesses
+to the absent vibrator sysfs node, even if older settings contain nonzero
+vibration intensities.
 
 ### Decryption
 

@@ -42,6 +42,11 @@ OF_ENABLE_LPTOOLS := 1
 # LineageOS is a Treble ROM; skip the legacy Treble check of zip installs
 OF_NO_TREBLE_COMPATIBILITY_CHECK := 1
 
+# Hide recovery reflash controls: copying the whole vendor_boot to the other
+# slot also copies the old ROM's platform ramdisk. This upstream flag does
+# not block background reflashing; see README.md before installing ROMs.
+OF_NO_REFLASH_CURRENT_ORANGEFOX := 1
+
 # Quick backup: both boot images the ROM updates, and data
 OF_QUICK_BACKUP_LIST := /boot;/vendor_boot;/data;
 
