@@ -184,10 +184,11 @@ For the first device test:
 
 The TEE stack (`teei_daemon`, KeyMint, Gatekeeper, their libraries, the trusted
 applications and the VINTF fragments) comes from the stock vendor image that
-the LineageOS tree uses. `teei_daemon` stays in `/vendor` and starts on `fs`
-with `persist` mounted read-only at `/mnt/vendor/persist`, its fallback for a
-virtual RPMB. This tablet uses the UFS RPMB unit (`/dev/0:0:0:49476`), which
-the daemon opens only after it has dropped to `system`. The recovery therefore
+the LineageOS tree uses. `teei_daemon` stays in `/vendor` and starts on `fs`.
+Stock also mounts `persist` at `/mnt/vendor/persist` for a virtual RPMB; the
+recovery does not, since this tablet uses the UFS RPMB unit (`/dev/0:0:0:49476`)
+and its `persist/rpmb` is empty. The daemon opens that unit only after it has
+dropped to `system`. The recovery therefore
 sets the TEE and RPMB device nodes to the stock owners and modes before it
 starts the daemon: the Gatekeeper TA binds its failure records to RPMB, sets
 RPMB up once when it loads, and otherwise fails every verify with

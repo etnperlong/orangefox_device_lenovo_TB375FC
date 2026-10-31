@@ -69,12 +69,11 @@ on fs
     chmod 0660 /dev/emmcrpmb0
     chown system system /dev/emmcrpmb0
 
-# libteei_daemon_vfs.so reads the RPMB state from
-# /mnt/vendor/persist/rpmb/rpmb.txt, and stock has persist mounted when the
-# daemon starts. Mount it read-only: the recovery only needs the existing
-# state, and nothing here may change the ROM's persist partition.
+# Stock also mounts persist at /mnt/vendor/persist, where libteei_daemon_vfs
+# keeps the state of a virtual RPMB (rpmb/rpmb.txt). This tablet uses the UFS
+# RPMB and its persist/rpmb is empty, so the recovery does not mount it. The
+# mount could not work here anyway: first-stage init creates /mnt/vendor before
+# SELinux is loaded, so it stays labeled tmpfs, and vendor_init may not create
+# directories in it.
 on fs
-    mkdir /mnt/vendor 0755 root root
-    mkdir /mnt/vendor/persist 0771 system system
-    mount ext4 /dev/block/by-name/persist /mnt/vendor/persist ro nosuid nodev noatime
     start teei_daemon
