@@ -209,6 +209,13 @@ HIDL boot control HAL (`boot-hal-1-2`) cannot register, and
 `update_engine_sideload` fails every A/B zip install with "Updater process
 ended with ERROR: 1".
 
+OrangeFox also declares the HIDL health HAL (`android.hardware.health@2.1`) in
+the device manifest but never starts it. Once `hwservicemanager` runs, a health
+client in the permissive recovery domain would wait forever for that declared
+instance, so `init.recovery.mt8792.rc` starts `health-hal-2-1` with the boot
+control HAL. The `charger` service is unaffected: its enforcing domain may not
+call `hwservicemanager`, so it falls back to its defaults at once.
+
 Check `adb logcat` in the recovery when decryption fails: `teei_daemon`,
 KeyMint, keystore2 and vold only log there. The recovery ships
 `task_profiles.json` for this: without it logd aborts at startup and logcat

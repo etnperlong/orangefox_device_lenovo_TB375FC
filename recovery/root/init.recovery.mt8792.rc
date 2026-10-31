@@ -16,3 +16,11 @@ on init
     # implementation (bootctrl.default), which the LineageOS recovery uses on
     # this device.
     start boot-hal-1-2
+
+    # Health HAL. OrangeFox declares android.hardware.health@2.1 in the
+    # recovery's device manifest but never starts the service. With
+    # hwservicemanager running, a HIDL health client in the recovery domain
+    # (GetBatteryInfo(), e.g. adb rescue getprop) would wait forever for the
+    # declared instance. The default implementation reads the battery from
+    # /sys/class/power_supply.
+    start health-hal-2-1
