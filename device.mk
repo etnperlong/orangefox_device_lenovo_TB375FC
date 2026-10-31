@@ -65,6 +65,16 @@ PRODUCT_PACKAGES += \
     android.hardware.boot@1.2-impl.recovery \
     bootctrl.default.recovery
 
+# hwservicemanager VINTF fragment. OrangeFox copies only the hwservicemanager
+# binary; the module's own fragment, which declares android.hidl.manager, is
+# not installed into the recovery. Without that declaration hwservicemanager
+# sets hwservicemanager.disabled=true at startup, boot-hal-1-2 cannot register
+# and init restarts it in a loop, and update_engine_sideload finds no boot
+# control HAL, so every A/B zip install ends with "Updater process ended with
+# ERROR: 1".
+PRODUCT_COPY_FILES += \
+    system/hwservicemanager/hwservicemanager.xml:$(TARGET_COPY_OUT_RECOVERY)/root/system/etc/vintf/manifest/hwservicemanager.xml
+
 # beanpod TEE stack (recovery/root/system and recovery/root/vendor). The stock
 # vendor blobs were built against the v34 VNDK; libkeymaster_portable.so
 # imports the unprefixed BoringSSL stack API (sk_num, sk_value, sk_push,

@@ -201,6 +201,14 @@ The recovery's VINTF main manifests (`/vendor/etc/vintf/manifest.xml` and
 `/system/etc/vintf/manifest.xml`) are minimal. They exist so that
 servicemanager reads the HAL fragments; without them no HAL can register.
 
+The framework side also needs `hwservicemanager.xml` from
+`system/hwservicemanager` in `/system/etc/vintf/manifest/` (`device.mk`).
+OrangeFox installs only the `hwservicemanager` binary. Without the fragment's
+`android.hidl.manager` declaration, `hwservicemanager` disables itself, the
+HIDL boot control HAL (`boot-hal-1-2`) cannot register, and
+`update_engine_sideload` fails every A/B zip install with "Updater process
+ended with ERROR: 1".
+
 Check `adb logcat` in the recovery when decryption fails: `teei_daemon`,
 KeyMint, keystore2 and vold only log there. The recovery ships
 `task_profiles.json` for this: without it logd aborts at startup and logcat
