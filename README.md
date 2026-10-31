@@ -82,13 +82,13 @@ to the updated slot. Flash the fragment again after an update.
 ### vendor_boot
 
 The tree reproduces `vendor_ramdisk00` of the LineageOS tree: the same 222
-`vendor_ramdisk` kernel modules and load order (`tb375fc-kernel-modules.mk`,
-including the patched `nt36532.ko` and `hall.ko`), the first-stage fstab, the
-Novatek touch firmware, and snapuserd, linker and fsck from
-`virtual_ab_ota/compression.mk`. The DTB, offsets and vendor cmdline are those
-of the LineageOS `vendor_boot`. Apart from the AVB hash (see Installing), a
-full `vendor_boot.img` from this tree carries the same ramdisk for the ROM;
-installing the fragment alone still changes less.
+`vendor_ramdisk` kernel modules from stock ZUXOS 1.5.10.123 and load order
+(`tb375fc-kernel-modules.mk`, including the patched `nt36532.ko` and
+`hall.ko`), the first-stage fstab, the Novatek touch firmware, and snapuserd,
+linker and fsck from `virtual_ab_ota/compression.mk`. The DTB, offsets and
+vendor cmdline are those of the LineageOS `vendor_boot`. Apart from the AVB
+hash (see Installing), a full `vendor_boot.img` from this tree carries the
+same ramdisk for the ROM; installing the fragment alone still changes less.
 
 ### Landscape display and touch
 
@@ -172,7 +172,8 @@ For the first device test:
    `getprop ro.build.version.release` matches the installed ROM (`17` for the
    current ROM), and both `getprop ro.build.version.security_patch` and
    `getprop ro.vendor.build.security_patch` match that ROM's property files,
-   not `2099-12-31`. The current vendor baseline is `2026-05-05`.
+   not `2099-12-31`. Builds on the ZUXOS 1.5.10.123 vendor baseline report a
+   vendor patch level of `2026-08-05`; earlier builds report `2026-05-05`.
 3. Save `adb logcat -b all -d` and inspect KeyMint, keystore2, and vold for
    `KEY_REQUIRES_UPGRADE`, `upgradeKey`, and other decryption errors. Missing
    upgrade messages alone are not proof that no key was changed. If the gate
@@ -209,7 +210,7 @@ has nothing to read.
 
 - LineageOS 24.0 device tree for the TB375FC: partition layout, `vendor_boot`
   layout, kernel modules, fstab, touch firmware, USB controller, boot control
-- Stock ZUXOS 1.5.10.103 vendor (through the LineageOS vendor tree): DTB, TEE
+- Stock ZUXOS 1.5.10.123 vendor (through the LineageOS vendor tree): DTB, TEE
   stack
 - OrangeFox fox_16.0 device trees (mondrian, sm84xx-common, alioth): layout,
   configfs USB script, vendor_boot settings

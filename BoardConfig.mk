@@ -47,7 +47,7 @@ BOARD_DTB_OFFSET                 := 0x07c80000
 BOARD_BOOT_HEADER_VERSION        := 4
 BOARD_VENDOR_BOOT_HEADER_VERSION := 4
 
-# DTB from the stock 1.5.10.103 vendor_boot, the same file the LineageOS tree
+# DTB from the stock 1.5.10.123 vendor_boot, the same file the LineageOS tree
 # ships. It also carries the long stock cmdline in /chosen/bootargs.
 TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/dtb.img
 
